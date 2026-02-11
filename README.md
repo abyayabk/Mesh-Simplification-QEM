@@ -1,77 +1,72 @@
-Mesh Simplification Using Quadric Error Metrics (QEM)
+# Mesh Simplification Using Quadric Error Metrics (QEM)
 
-Example of mesh simplification applied to a watertight 3D model.
+![Mesh Comparison 1](<Mesh Comparison 1.png>)
+![Mesh Comparison 2](<Mesh Comparison 2.png>)
+![Mesh Comparison 3](<Mesh Comparison 3.png>)
 
-Overview
+---
 
-This project implements mesh simplification using the Quadric Error Metrics (QEM) algorithm, a foundational technique in computer graphics for reducing polygon counts while preserving geometric fidelity. The goal is to take high-resolution 3D meshes and produce lower-resolution approximations, suitable for real-time rendering, interactive applications, and 3D visualization.
+## Overview
 
-This project demonstrates:
+This project implements **Mesh Simplification** using **Quadric Error Metrics (QEM)**, a classical algorithm in computer graphics for reducing mesh complexity while preserving geometric fidelity. The main goal is to simplify high-resolution 3D meshes into lower-resolution representations, suitable for **real-time rendering, interactive applications, and 3D visualization**.  
 
-- Understanding of geometry, linear algebra, and 3D topology.
+I developed this project from scratch, including **OBJ loading/saving, adjacency computation, quadric calculations, and edge collapse with a priority heap**, fully inspired by Garland & Heckbert's 1997 paper. This project demonstrates a combination of **geometry, linear algebra, and computational geometry**, showing not only coding skills but also deep theoretical understanding — a key part of my preparation for graduate studies in Computer Science.
 
-- Practical application of vertex quadrics and plane fitting.
+---
 
-- Edge collapse heuristics with validity checks for manifold preservation.
+## Key Features
 
-- A custom OBJ loader and writer for full mesh I/O.
+- **OBJ Loader & Writer**: Supports standard triangular meshes.
+- **Vertex Quadrics Computation**: Uses plane equations from incident faces to compute per-vertex quadrics.
+- **Edge Collapse using Priority Heap**: Collapses edges based on **minimal quadric error**, with a heap to always select the most optimal edge.
+- **Manifold & Face-Flip Safety Checks**: Prevents collapsing edges that would invert faces or break mesh topology.
+- **Target Face Count Simplification**: Allows reducing meshes to a specified number of faces.
+- **Reindexing of Vertices**: Cleans up deleted vertices and updates face indices for correct OBJ export.
 
+---
 
-Features
+## Algorithm Workflow
 
-- Load and save OBJ meshes.
+1. **Load OBJ Mesh**
+2. **Build Vertex Adjacency & Edges**
+3. **Compute Per-Face Plane Equations**
+4. **Compute Vertex Quadrics**
+5. **Build Edge Heap**
+   - Each edge gets a **collapse cost** based on the quadric metric.
+   - Heap always selects the **edge with minimal cost**.
+6. **Iterative Edge Collapse**
+   - Pop edge from heap.
+   - Validate edge collapse (manifold & face flip).
+   - Collapse edge and update:
+     - Vertex positions & quadrics
+     - Faces (remove degenerate faces)
+     - Vertex adjacency
+     - Heap entries for affected edges
+7. **Reindex Vertices**
+8. **Export Simplified OBJ**
 
-- Build vertex adjacency and edge sets for simplification.
+This approach ensures **efficient simplification while preserving mesh topology**, closely following the theory of Garland & Heckbert.
 
-- Compute per-vertex quadrics using plane equations of incident faces.
+---
 
-- Evaluate edge collapse costs and compute optimal positions for vertex removal.
+## Usage
 
-- Maintain mesh integrity by preventing face flips and non-manifold edges.
+```bash
+# Build project
+mkdir build && cd build
+cmake ..
+cmake --build .
 
-- Fully adjustable target face count for mesh reduction.
-
-- Optional visualization-ready vertex and face normals.
-
-
-How It Works
-
-* Load Mesh
-
-- Reads .OBJ files with vertices and triangular faces.
-
-- Stores vertex positions, adjacency, and face connectivity.
-
-
-* Compute Quadrics
-
-- For each face, compute plane equation (a,b,c,d) and generate a 4x4 quadric matrix Kp = pp^T.
-
-- Sum the quadrics for each incident vertex to form Qv.
-
-
-* Edge Collapse
-
-- For every edge (v0,v1):
-
-    Compute optimal collapse position using Q0 + Q1.
-
-    Check validity to prevent inverted faces or non-manifold geometry.
-
-- Collapse edges iteratively until the target number of faces is reached.
-
-
-* Output Mesh
-
-- Reindex vertices to remove deleted ones.
-
-- Export simplified mesh as .OBJ.
+# Run simplification
+./hello_world
 
 
-**References**
+References
 
 Garland, M., & Heckbert, P. S. (1997). Surface Simplification Using Quadric Error Metrics.
 
 Stanford 3D Scanning Repository – Bunny, Dragon, Armadillo
 
 GLM: OpenGL Mathematics
+
+LearnOpenGL - https://learnopengl.com/
