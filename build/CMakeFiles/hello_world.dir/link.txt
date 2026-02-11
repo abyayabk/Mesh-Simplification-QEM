@@ -1,0 +1,1 @@
+/usr/bin/clang++ -g -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/hello_world.dir/src/main.cpp.o CMakeFiles/hello_world.dir/src/glad.c.o CMakeFiles/hello_world.dir/src/mesh.cpp.o CMakeFiles/hello_world.dir/src/shader.cpp.o -o hello_world  -Wl,-rpath,/opt/homebrew/lib /opt/homebrew/lib/libglfw.3.4.dylib -framework OpenGL
